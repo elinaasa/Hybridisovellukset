@@ -11,5 +11,5 @@ type MediaItem {
 }
 
 type Query {
-  mediaItems: [MediaType]
+  mediaItems: [MediaItem]
 }
