@@ -1,0 +1,7 @@
+type Tag {
+  tag_id: ID!
+  tag_name: String!
+}
+
+type Query {
+  tags:

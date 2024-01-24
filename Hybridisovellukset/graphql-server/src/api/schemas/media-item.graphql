@@ -12,4 +12,5 @@ type MediaItem {
 
 type Query {
   mediaItems: [MediaItem]
+  mediaItem(media_id: ID!): MediaItem
 }
