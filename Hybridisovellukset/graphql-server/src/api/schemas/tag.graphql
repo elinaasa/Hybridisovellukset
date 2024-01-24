@@ -4,4 +4,5 @@ type Tag {
 }
 
 type Query {
-  tags:
+  tags: [Tag]
+  }
