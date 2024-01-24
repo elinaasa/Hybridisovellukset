@@ -6,3 +6,12 @@ type Tag {
 type Query {
   tags: [Tag]
   }
+
+type Mutation {
+  createTag(input: TagInput!): Tag
+  deleteTag(input: ID!): Message
+}
+
+type Message {
+  message: String!
+}
