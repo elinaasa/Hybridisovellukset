@@ -6,6 +6,7 @@ import {
   postTagToMedia,
   putMedia,
 } from '../models/mediaModel';
+import {MediaItem} from '@sharedTypes/DBTypes';
 
 export default {
   Query: {
@@ -45,4 +46,5 @@ export default {
     ) => {
       return await putMedia(args.input, Number(args.media_id));
     },
+  },
 };
