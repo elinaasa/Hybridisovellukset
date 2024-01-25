@@ -1,3 +1,5 @@
+import { GraphQLError } from 'graphql';
+import {MyContext} from '../../local-types';
 import {
   fetchAllMedia,
   fetchMediaById,
@@ -25,7 +27,13 @@ export default {
     createMediaItem: async (
       _parent: undefined,
       args: {input: Omit<MediaItem, 'media_id' | 'created_at' | 'thumbnail'>},
+      context: MyContext,
     ) => {
+      if (!context.user || !context.user.user_id) {
+        throw new GraphQLError('Not authorized', {
+          extensions: {code: 'NOT_AUTHORIZED'},
+        });
+      }
       return await postMedia(args.input);
     },
     addTagToMediaItem: async (

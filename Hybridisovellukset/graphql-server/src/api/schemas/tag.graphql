@@ -12,6 +12,10 @@ type Mutation {
   deleteTag(input: ID!): Message
 }
 
+input TagInput {
+  tag_name: String!
+}
+
 type Message {
   message: String!
 }

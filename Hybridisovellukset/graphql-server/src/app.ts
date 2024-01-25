@@ -12,6 +12,8 @@ import {
   ApolloServerPluginLandingPageLocalDefault,
   ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
+import {MyContext} from './local-types';
+import {authenticate} from './lib/functions';
 
 const app = express();
 
@@ -28,13 +30,22 @@ const app = express();
       res.send({message: 'Server is running'});
     });
 
-    const server = new ApolloServer({
+    const server = new ApolloServer<MyContext>({
       typeDefs,
       resolvers,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
     });
 
     await server.start();
+
+    app.use(
+      '/graphql',
+      cors<cors.CorsRequest>(),
+      express.json(),
+      expressMiddleware(server, {
+        context: ({req}) => authenticate(req),
+      }),
+    );
 
     app.use('/graphql', cors(), express.json(), expressMiddleware(server));
 
