@@ -14,6 +14,11 @@ import {
 } from '@apollo/server/plugin/landingPage/default';
 import {MyContext} from './local-types';
 import {authenticate} from './lib/functions';
+import {
+  constraintDirectiveTypeDefs,
+  createApollo4QueryValidationPlugin,
+} from 'graphql-constraint-directive/apollo4';
+import {makeExecutableSchema} from '@graphql-tools/schema';
 
 const app = express();
 
@@ -30,24 +35,32 @@ const app = express();
       res.send({message: 'Server is running'});
     });
 
-    const server = new ApolloServer<MyContext>({
-      typeDefs,
+    // create executable schema for validation
+    const schema = makeExecutableSchema({
+      typeDefs: [constraintDirectiveTypeDefs, typeDefs],
       resolvers,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    });
+
+    const server = new ApolloServer<MyContext>({
+      schema,
+      plugins: [
+        createApollo4QueryValidationPlugin({schema}),
+        process.env.NODE_ENV === 'production'
+          ? ApolloServerPluginLandingPageProductionDefault()
+          : ApolloServerPluginLandingPageLocalDefault(),
+      ],
     });
 
     await server.start();
 
     app.use(
       '/graphql',
-      cors<cors.CorsRequest>(),
+      cors(),
       express.json(),
       expressMiddleware(server, {
         context: ({req}) => authenticate(req),
       }),
     );
-
-    app.use('/graphql', cors(), express.json(), expressMiddleware(server));
 
     app.use(notFound);
     app.use(errorHandler);

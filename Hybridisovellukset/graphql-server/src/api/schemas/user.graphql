@@ -16,12 +16,21 @@ type UserResponse {
   message: String!
 }
 
+type LoginResponse {
+  user: User!
+  token: String!
+  message: String!
+}
+
 input UserInput {
-  username: String!
-  email: String!
-  password: String!
+  username: String! @constraint(minLength: 3, maxLength: 30)
+  email: String! @constraint(format: "email")
+  password: String! @constraint(minLength: 6, pattern: "^(?=.*[a-z])(?=.*[0-9])"
 }
 
 type Mutation {
   createUser(input: UserInput!): UserResponse
+  login(username: String!, password: String!): LoginResponse
 }
+
+
