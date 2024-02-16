@@ -1,21 +1,34 @@
 type Tag {
-  tag_id: ID!
-  tag_name: String!
+  tag_id: ID
+  tag_name: String
 }
 
 type Query {
   tags: [Tag]
-  }
-
-type Mutation {
-  createTag(input: TagInput!): Tag
-  deleteTag(input: ID!): Message
+  tagsByMediaId(media_id: ID!): [Tag]
 }
 
 input TagInput {
-  tag_name: String!
+  tag_name: String
+  media_id: ID
 }
 
-type Message {
-  message: String!
+input TagInputID {
+  tag_id: ID
+  media_id: ID
+}
+
+type Mutation {
+  """
+  Requires authorization token
+  """
+  createTag(input: TagInput!): Tag
+  """
+  Requires admin authorization token
+  """
+  deleteTag(input: ID!): Message
+  """
+  Requires authorization token
+  """
+  deleteTagFromMediaItem(input: TagInputID!): Message
 }

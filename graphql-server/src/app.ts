@@ -3,22 +3,22 @@ import express, {Request, Response} from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import {notFound, errorHandler} from './middlewares';
-import {MessageResponse} from '@sharedTypes/MessageTypes';
 import {ApolloServer} from '@apollo/server';
 import {expressMiddleware} from '@apollo/server/express4';
 import typeDefs from './api/schemas/index';
 import resolvers from './api/resolvers/index';
+import {MessageResponse} from '@sharedTypes/MessageTypes';
 import {
   ApolloServerPluginLandingPageLocalDefault,
-  ApolloServerPluginLandingPageProductionDefault,
+  //ApolloServerPluginLandingPageProductionDefault,
 } from '@apollo/server/plugin/landingPage/default';
 import {MyContext} from './local-types';
 import {authenticate} from './lib/functions';
+import {makeExecutableSchema} from '@graphql-tools/schema';
 import {
   constraintDirectiveTypeDefs,
   createApollo4QueryValidationPlugin,
 } from 'graphql-constraint-directive/apollo4';
-import {makeExecutableSchema} from '@graphql-tools/schema';
 
 const app = express();
 
@@ -43,11 +43,10 @@ const app = express();
 
     const server = new ApolloServer<MyContext>({
       schema,
+      introspection: true,
       plugins: [
         createApollo4QueryValidationPlugin({schema}),
-        process.env.NODE_ENV === 'production'
-          ? ApolloServerPluginLandingPageProductionDefault()
-          : ApolloServerPluginLandingPageLocalDefault(),
+        ApolloServerPluginLandingPageLocalDefault(),
       ],
     });
 
